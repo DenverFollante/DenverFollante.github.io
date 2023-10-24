@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<!--
+	Alpha by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title></title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+
+			<!-- Main -->
+				
+<html>
+<head>
+    <title>My Jupyter Notebook</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .code-container {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<section id="main">
+	<header>
+		<h2>Airline Dataset</h2>
+		<p>An exploratory data analysis</p>
+	</header>
+	<div class="box">
+		<span class="image featured"><img src="images/airline.jpg" alt="" /></span>
+		<h>MySQL Workbench</h>
+		<!DOCTYPE html>
+<body> 
+   	 <div class="container">
+
+        <h2>Airline Dataset: Introduction</h2>
+        <p>Airline data plays a crucial role in providing valuable insights into the operational aspects and effectiveness of the aviation sector. Through the analysis of data related to flight delays, cancellations, and punctuality, airlines can pinpoint patterns and implement strategies to enhance their on-time performance and reduce disruptions. Researchers and analysts also rely on airline data to examine market trends, assess environmental impacts, and formulate strategies for sustainable growth within the industry. In summary, airline data serves as the cornerstone for making informed decisions, improving operational efficiency, and advancing the aviation industry as a whole.</p>
+
+        <h2>Data Preparation and Import</h2>
+        <div class="code-container">
+            <pre>
+CREATE DATABASE AIRLINE1;
+USE AIRLINE1;
+
+-- Data Import preparation 
+CREATE TABLE airlinedata (
+passenger_id VARCHAR (255),
+first_name VARCHAR (255),
+last_name  VARCHAR (255),
+gender VARCHAR (255),
+age VARCHAR (255),
+nationality VARCHAR (255),
+airport_name VARCHAR (255),
+airport_country_code VARCHAR (255),
+country_name VARCHAR (255),
+airport_continent VARCHAR (255),
+continents VARCHAR (255),
+departure_date VARCHAR (255),
+arrival_airport VARCHAR (255),
+pilot_name VARCHAR (255),
+flight_status VARCHAR (255)
+);
+
+LOAD DATA LOCAL INFILE 'Airline Dataset Updated - v1.csv'
+INTO TABLE airlinedata
+FIELDS TERMINATED BY ','
+IGNORE 1 LINES;
+
+SHOW GLOBAL VARIABLES LIKE 'local_infile';
+SET GLOBAL local_infile = 'ON';
+            </pre>
+        </div>
+        <p>Output:</p>
+		<div class="box">
+			<span class="image featured"><img src="images/Describe.jpg" alt="" /></span>
+
+		<h3>Data Cleansing and Processing</h3>
+        <div class="code-container">
+            <pre>
+-- Data Cleaning process
+-- Describing the table will give the field type and to determine its key
+
+DESCRIBE airlinedata
+SELECT * FROM airlinedata
+
+-- Add column as primary key 
+
+ALTER TABLE airlinedata
+ADD COLUMN row_id INT PRIMARY KEY AUTO_INCREMENT FIRST;
+
+-- Set the appropriate field type for each column 
+
+ALTER TABLE airlinedata
+MODIFY age INT;
+
+UPDATE airlinedata
+SET departure_date = date_format(str_to_date(departure_date, '%d/%m/%Y'), '%Y-%m-%d');
+
+ALTER TABLE airlinedata
+MODIFY departure_date DATE;
+
+-- Removing dublicates
+-- Determine if there are any duplicate in the data
+
+SELECT passenger_id, COUNT(passenger_id)
+FROM airlinedata
+GROUP BY passenger_id
+HAVING COUNT(passenger_id) > 1;
+
+SET AUTOCOMMIT = OFF;
+COMMIT;
+
+-- Deleting duplicates
+
+DELETE FROM airlinedata
+WHERE row_id IN (
+SELECT row_id 
+FROM (
+SELECT *,
+ROW_NUMBER() OVER (PARTITION BY passenger_id) AS rn
+FROM airlinedata) AS x
+WHERE x.rn > 1);
+        </pre>
+        </div>
+</div>
+<p>Output:</p>
+<div class="box">
+	<span class="image featured"><img src="images/updateddesc.jpg" alt="" /></span>
+
+<h2>Exploratory Data Analysis</h2>
+<div class="code-container">
+        <pre>
+SELECT * FROM airlinedata
+        </pre>
+        </div>
+<p>Output:</p>
+<div class="box">
+		<span class="image featured"><img src="images/updateddesc.jpg" alt="" /></span>
+
+<div class="code-container">
+		<pre>
+SELECT * FROM airlinedata
+			</pre>
+		</div>
+		<p>Output:</p>
+		<div class="box">
+			<span class="image featured"><img src="images/all.jpg" alt="" /></span>
+	
+
+						<div class="row">
+							<div class="row-6 row-12-mobilep">
+								<h3>And now a subheading</h3>
+								<p>Adipiscing faucibus nunc placerat. Tempus adipiscing turpis non blandit accumsan eget lacinia nunc integer interdum amet aliquam ut orci non col ut ut praesent. Semper amet interdum mi. Phasellus enim laoreet ac ac commodo faucibus faucibus. Curae lorem ipsum adipiscing ac. Vivamus ornare laoreet odio vis praesent.</p>
+							</div>
+							<!DOCTYPE html>
+							
+							<div class="row-6 row-12-mobilep">
+								<h3>And another subheading</h3>
+								<p>Adipiscing faucibus nunc placerat. Tempus adipiscing turpis non blandit accumsan eget lacinia nunc integer interdum amet aliquam ut orci non col ut ut praesent. Semper amet interdum mi. Phasellus enim laoreet ac ac commodo faucibus faucibus. Curae lorem ipsum adipiscing ac. Vivamus ornare laoreet odio vis praesent.</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+			<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+						<li><a href="#" class="icon brands fa-google-plus"><span class="label">Google+</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</footer>
+
+		</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.dropotron.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

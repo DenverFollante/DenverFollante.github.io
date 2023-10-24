@@ -1,0 +1,334 @@
+<!DOCTYPE HTML>
+<!--
+	Alpha by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title></title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+	</head>
+
+			<!-- Main -->
+				
+<html>
+<head>
+    <title>My Jupyter Notebook</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .code-container {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<section id="main">
+	<header>
+		<h2>Airline Dataset</h2>
+		<p>An exploratory data analysis</p>
+	</header>
+	<div class="box">
+		<span class="image featured"><img src="images/airline.jpg" alt="" /></span>
+		<h2>MySQL Workbench</h2>
+		<!DOCTYPE html>
+<body>
+    <h2>Airline Dataset: Introduction</h2>
+    <p>Airline data plays a crucial role in providing valuable insights into the operational aspects and effectiveness of the aviation sector. Through the analysis of data related to flight delays, cancellations, and punctuality, airlines can pinpoint patterns and implement strategies to enhance their on-time performance and reduce disruptions. Researchers and analysts also rely on airline data to examine market trends, assess environmental impacts, and formulate strategies for sustainable growth within the industry. In summary, airline data serves as the cornerstone for making informed decisions, improving operational efficiency, and advancing the aviation industry as a whole.</p>
+    <div class="row">
+        <!DOCTYPE html>
+    </div>
+    
+    <h2>Data Preparation and Import</h2>
+    <div class="code-container">
+        <pre>
+CREATE DATABASE AIRLINE1;
+USE AIRLINE1;
+
+-- Data Import preparation 
+CREATE TABLE airlinedata (
+passenger_id VARCHAR (255),
+first_name VARCHAR (255),
+last_name  VARCHAR (255),
+gender VARCHAR (255),
+age VARCHAR (255),
+nationality VARCHAR (255),
+airport_name VARCHAR (255),
+airport_country_code VARCHAR (255),
+country_name VARCHAR (255),
+airport_continent VARCHAR (255),
+continents VARCHAR (255),
+departure_date VARCHAR (255),
+arrival_airport VARCHAR (255),
+pilot_name VARCHAR (255),
+flight_status VARCHAR (255)
+);
+
+LOAD DATA LOCAL INFILE 'Airline Dataset Updated - v1.csv'
+INTO TABLE airlinedata
+FIELDS TERMINATED BY ','
+IGNORE 1 LINES;
+
+SHOW GLOBAL VARIABLES LIKE 'local_infile';
+SET GLOBAL local_infile = 'ON';
+        </pre>
+    </div>
+    <h4>Output:</h4>
+    <div class="box">
+        <class="image featured"><img src="images/Describe.jpg" alt="" />
+    </div>
+    <h2>Data Cleansing and Processing</h2>
+    <div class="code-container">
+        <pre>
+-- Data Cleaning process
+-- Describing the table will give the field type and to determine its key
+
+DESCRIBE airlinedata
+
+-- Add column as primary key 
+
+ALTER TABLE airlinedata
+ADD COLUMN row_id INT PRIMARY KEY AUTO_INCREMENT FIRST;
+
+-- Set the appropriate field type for each column 
+
+ALTER TABLE airlinedata
+MODIFY age INT;
+
+UPDATE airlinedata
+SET departure_date = date_format(str_to_date(departure_date, '%d/%m/%Y'), '%Y-%m-%d');
+
+ALTER TABLE airlinedata
+MODIFY departure_date DATE;
+
+-- Removing dublicates
+-- Determine if there are any duplicate in the data
+
+SELECT passenger_id, COUNT(passenger_id)
+FROM airlinedata
+GROUP BY passenger_id
+HAVING COUNT(passenger_id) > 1;
+
+SET AUTOCOMMIT = OFF;
+COMMIT;
+
+-- Deleting duplicates
+
+DELETE FROM airlinedata
+WHERE row_id IN (
+SELECT row_id 
+FROM (
+SELECT *,
+ROW_NUMBER() OVER (PARTITION BY passenger_id) AS rn
+FROM airlinedata) AS x
+WHERE x.rn > 1);
+    </pre>
+</div>
+<h4>Output:</h4>
+<div class="box">
+	<class="image featured"><img src="images/updateddesc.jpg" alt="" />
+</div>
+
+<h2>Exploratory Data Analysis</h2>
+    <div class="code-container">
+    <pre>
+ SELECT * FROM airlinedata;
+    </pre>
+</div>
+<h4>Output:</h4>
+<div class="box">
+	<span class="image featured"><img src="images/all.jpg" alt="" /></span>
+</div>
+
+<h2>I. Passenger Demographics</h2>
+<h4>Total number of passengers</h4>
+<div class="code-container">
+    <pre>
+SELECT COUNT(passenger_id) as Total_Passengers
+FROM airlinedata;
+    </pre>
+</div>
+
+<h4>Output:</h4>
+<div class="box">
+	<class="image featured"><img src="images/total.jpg" />
+</div>
+
+<h4>Total number of passengers by gender</h4>
+<div class="code-container">
+    <pre>
+SELECT gender, COUNT(gender) as Total_passenger
+FROM airlinedata
+GROUP BY gender;
+    </pre>
+</div>
+<h4>Output:</h4>
+<div class="box">
+	<class="image featured"><img src="images/gender.jpg" alt="" />
+</div>
+
+<h4>Total number of passengers by age</h4>
+<div class="code-container">
+    <pre>
+SELECT age, 
+	COUNT(passenger_id) as total_passenger
+FROM airlinedata
+GROUP BY age
+ORDER BY total_passenger DESC
+</div>
+<h4>Output:</h4>
+<div class="box">
+	<class="image featured"><img src="images/age.jpg" alt="" />
+</div>
+
+<h4>Distribution of passengers accross nationality</h4>
+<div class="code-container">
+    <pre>
+SELECT nationality,
+	COUNT(passenger_id)/98617 * 100 AS Percentage
+FROM airlinedata
+GROUP BY nationality
+ORDER BY Percentage DESC
+LIMIT 10;
+</div>
+<h4>Output:</h4>
+<div class="box">
+	<class="image featured"><img src="images/nat.jpg" alt="" />
+</div>
+
+<h2>II. Flight Analysis</h2>
+<h4>Top 10 airports with the largest passenger count</h4>
+<div class="code-container">
+    <pre>
+SELECT airport_name,
+	COUNT(passenger_id) as Total_passenger
+FROM airlinedata
+GROUP BY airport_name
+ORDER BY Total_passenger DESC
+LIMIT 10;
+    </pre>
+</div>
+<h4>Output:</h4>
+<div class="box">
+	<class="image featured"><img src="images/air.jpg" alt="" />
+</div>
+
+<h4>Total number of passengers by airport continent</h4>
+<div class="code-container">
+    <pre>
+SELECT continents,
+	COUNT(passenger_id) as Total_passenger
+FROM airlinedata
+GROUP BY continents
+ORDER BY COUNT(passenger_id) DESC;
+    </pre>
+</div>
+<h4>Output:</h4>
+<div class="box">
+	<class="image featured"><img src="images/aircont.jpg" alt="" />
+</div>
+
+<h4>Most prevailing flight status</h4>
+<div class="code-container">
+    <pre>
+SELECT flight_status,
+	COUNT(passenger_id)/98617 * 100 as flightstatus_percentage
+FROM airlinedata
+GROUP BY flight_status
+ORDER BY flightstatus_percentage
+    </pre>
+</div>
+<h4>Output:</h4>
+<div class="box">
+	<class="image featured"><img src="images/stat.jpg" alt="" />
+</div>
+
+<h4>Determine the top 3 months of the year has the highest number of passenger</h4>
+<div class="code-container">
+    <pre>
+SELECT
+	EXTRACT(MONTH FROM departure_date) AS MONTH_,
+	COUNT(passenger_id) AS total_passengers
+FROM airlinedata
+GROUP BY MONTH_
+ORDER BY total_passengers DESC
+LIMIT 3;
+</div>
+<h4>Output:</h4>
+<div class="box">
+	<class="image featured"><img src="images/mon.jpg" alt="" />
+</div>
+
+<h4>Determine the top 3 months of the year has the lowest number of passenger</h4>
+<div class="code-container">
+    <pre>
+-- Determine the top 3 months of the year has the lowest number of passenger
+SELECT
+	EXTRACT(MONTH FROM departure_date) AS MONTH_,
+	COUNT(passenger_id) AS total_passengers
+FROM airlinedata
+GROUP BY MONTH_
+ORDER BY total_passengers
+LIMIT 3;
+</div>
+<h4>Output:</h4>
+<div class="box">
+	<class="image featured"><img src="images/month.jpg" alt="" />
+</div>
+
+<h2>Conclusion</h2>
+<p>The analysis of the airline dataset provides valuable insights into various aspects of airline operations and passenger demographics. Here are some key findings</p>
+<div class="row">
+    <!DOCTYPE html>
+</div>
+
+<div class="row">
+    <div class="row-6 row-12-mobilep">
+        <h5>Gender Ratio:</h5>
+        <p>The ratio between genders in nearly equal This indicates a balanced gender representation in airline travel.</p>
+        <h5>Age Distribution:</h5>
+        <p>The wide range of the age distribution of the passengers suggests that people of various age groups use airline services, emphasizing the inclusivity of the industry.</p>
+        <h5>Flight Status:</h5>
+        <p>The dataset shows that there is an almost equal ratio of flights that were cancelled, delayed, or on time. This balance between different flight status indicates a certain level of efficiency in managing flight schedules.</p>
+        <h5>Peak Travel Months:</h5>
+        <p>The analysis highlights that the months of May to August tend to have a high traffic of passengers. This peak in travel can be can be attributed to the summer holidays, during which passengers travlel for vacations and leisure.</p>
+    </div>
+    <!DOCTYPE html>
+</section>
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer id="footer">
+    <ul class="icons">
+        <li><a href="https://www.linkedin.com/in/denverfollante/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+        <li><a href="https://mail.google.com/mail/u/0/#inbox" class="icon brands fa-google"><span class="label">Google</span></a></li>
+    </ul>
+    <ul class="copyright">
+        <li><h6>Email: follantedenver@gmail.com</h6></li><li><h6>Phone: 09922080902</a></h6></li><li><h6>Address: Ilocos Norte, Philippines</h6></li></br>
+        <li>&copy; Untitled. All rights reserved.</li>
+        <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+    </ul>
+</footer>
+
+</div>
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/jquery.dropotron.min.js"></script>
+<script src="assets/js/jquery.scrollex.min.js"></script>
+<script src="assets/js/browser.min.js"></script>
+<script src="assets/js/breakpoints.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+
+</body>
+</html>
